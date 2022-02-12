@@ -65,6 +65,12 @@ final class CSVExtractor implements Extractor
         }
     }
 
+    /**
+     * @psalm-suppress InvalidNullableReturnType
+     * @psalm-suppress InaccessibleProperty
+     * @psalm-suppress ImpureMethodCall
+     * @psalm-suppress NullableReturnStatement
+     */
     private function reader() : Reader
     {
         if ($this->reader === null) {
