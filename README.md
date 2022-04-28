@@ -52,7 +52,7 @@ use Flow\ETL\Row;
 use Flow\ETL\Rows;
 use League\Csv\Writer;
 
-$loader = new CSV::to(
+$loader = new CSV::to_file(
     $path = \sys_get_temp_dir() . '/' . \uniqid('flow_php_etl_csv_loader', true) . '.csv'
 );
 
@@ -64,8 +64,10 @@ $loader->load(new Rows(
     Row::create(new Row\Entry\ArrayEntry('row', [2, 'Tomek'])),
     Row::create(new Row\Entry\ArrayEntry('row', [3, 'Dawid'])),
 ));
-
 ```
+
+> If `CSV::to_file` will be used in async pipeline due to concurrency issues it will be turned into
+> `CSV::to_directory`. Each process will write random file in the directory.
 
 ## Development
 
