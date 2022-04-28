@@ -9,18 +9,27 @@ ETL Adapter that provides Loaders and Extractors that works with CSV files.
 Following implementation are available: 
 - [League CSV](https://csv.thephpleague.com/) 
 
+## Installation 
+
+``` 
+composer require flow-php/etl-adapter-csv
+composer require league/csv
+```
+
+> League CSV adapter is not implicitly required, you need to make sure it is available in your composer.json file.
 
 ## Extractor - League CSVExtractor
 
 ```php
 <?php
 
+use Flow\ETL\DSL\CSV;
 use Flow\ETL\Adapter\CSV\League\CSVExtractor;
 use Flow\ETL\Row;
 use Flow\ETL\Rows;
 use League\Csv\Reader;
 
-$extractor = new CSVExtractor(
+$extractor = CSV::read_file(
     __DIR__ . '/../Fixtures/annual-enterprise-survey-2019-financial-year-provisional-csv.csv',
     $rowsInBatch = 5,
     $offsetHeader = 0
@@ -37,12 +46,13 @@ foreach ($extractor->extract() as $rows) {
 ```php 
 <?php
 
+use Flow\ETL\DSL\CSV;
 use Flow\ETL\Adapter\CSV\League\CSVLoader;
 use Flow\ETL\Row;
 use Flow\ETL\Rows;
 use League\Csv\Writer;
 
-$loader = new CSVLoader(
+$loader = new CSV::write(
     $path = \sys_get_temp_dir() . '/' . \uniqid('flow_php_etl_csv_loader', true) . '.csv'
 );
 
