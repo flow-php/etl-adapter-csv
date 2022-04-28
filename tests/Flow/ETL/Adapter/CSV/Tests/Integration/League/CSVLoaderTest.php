@@ -18,7 +18,7 @@ final class CSVLoaderTest extends TestCase
     {
         $path = \sys_get_temp_dir() . '/' . \uniqid('flow_php_etl_csv_loader', true) . '.csv';
 
-        $loader = CSV::write($path);
+        $loader = CSV::to_directory($path);
 
         $loader->load(new Rows(
             Row::create(new Row\Entry\IntegerEntry('id', 1), new Row\Entry\StringEntry('name', 'Norbert')),
@@ -49,7 +49,7 @@ CSV,
     {
         $path = \sys_get_temp_dir() . '/' . \uniqid('flow_php_etl_csv_loader', true) . '.csv';
 
-        $loader = new CSVLoader($path, 'w+', $withHeader = true, $safeMode = false);
+        $loader = CSV::to_file($path, 'w+', $withHeader = true);
 
         $loader->load(new Rows(
             Row::create(new Row\Entry\IntegerEntry('id', 1), new Row\Entry\StringEntry('name', 'Norbert')),

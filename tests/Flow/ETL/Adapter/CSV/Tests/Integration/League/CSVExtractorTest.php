@@ -50,7 +50,7 @@ final class CSVExtractorTest extends TestCase
 
     public function test_extracting_csv_files_without_header() : void
     {
-        $extractor = CSV::read_file(
+        $extractor = CSV::from_file(
             __DIR__ . '/../../Fixtures/annual-enterprise-survey-2019-financial-year-provisional-csv.csv',
             5
         );
@@ -73,7 +73,7 @@ final class CSVExtractorTest extends TestCase
 
     public function test_extracting_csv_files_from_directory_recursively() : void
     {
-        $extractor = CSV::read_directory(__DIR__ . '/../../Fixtures/');
+        $extractor = CSV::from_directory(__DIR__ . '/../../Fixtures/');
 
         $total = 0;
         /** @var Rows $rows */

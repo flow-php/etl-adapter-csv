@@ -15,8 +15,8 @@ class CSV
     /**
      * @throws InvalidArgumentException
      */
-    final public static function read_file(
-        string $path,
+    final public static function from_file(
+        string $file_name,
         int $rows_in_batch = 1000,
         ?int $header_offset = null,
         string $operation_mode = 'r',
@@ -29,12 +29,12 @@ class CSV
             throw new InvalidArgumentException("Missing League CSV dependency, please run 'composer require league/csv'");
         }
 
-        if (!\file_exists($path)) {
-            throw new InvalidArgumentException("File {$path} not found.'");
+        if (!\file_exists($file_name)) {
+            throw new InvalidArgumentException("File {$file_name} not found.'");
         }
 
         return new CSVExtractor(
-            $path,
+            $file_name,
             $rows_in_batch,
             $header_offset,
             $operation_mode,
@@ -48,8 +48,8 @@ class CSV
     /**
      * @throws InvalidArgumentException
      */
-    final public static function read_directory(
-        string $path,
+    final public static function from_directory(
+        string $folder_path,
         int $rows_in_batch = 1000,
         ?int $header_offset = null,
         string $operation_mode = 'r',
@@ -62,11 +62,11 @@ class CSV
             throw new InvalidArgumentException("Missing League CSV dependency, please run 'composer require league/csv'");
         }
 
-        if (!\file_exists($path) || !\is_dir($path)) {
-            throw new InvalidArgumentException("Directory {$path} not found.'");
+        if (!\file_exists($folder_path) || !\is_dir($folder_path)) {
+            throw new InvalidArgumentException("Directory {$folder_path} not found.'");
         }
 
-        $directoryIterator = new \RecursiveDirectoryIterator($path);
+        $directoryIterator = new \RecursiveDirectoryIterator($folder_path);
         $directoryIterator->setFlags(\RecursiveDirectoryIterator::SKIP_DOTS);
 
         $regexIterator = new \RegexIterator(
@@ -96,22 +96,20 @@ class CSV
     }
 
     /**
-     * @param string $path
+     * @param string $file_name
      * @param string $open_mode
-     * @param bool $safe_mode - when true path will become a folder and loader will write a csv file with a random name. Required while async processing.
      * @param bool $with_header
      * @param string $delimiter
      * @param string $enclosure
      * @param string $escape
      *
-     * @throws InvalidArgumentException
+     *@throws InvalidArgumentException
      *
      * @return Loader
      */
-    final public static function write(
-        string $path,
+    final public static function to_file(
+        string $file_name,
         string $open_mode = 'w+',
-        bool $safe_mode = true,
         bool $with_header = true,
         string $delimiter = ',',
         string $enclosure = '"',
@@ -121,6 +119,33 @@ class CSV
             throw new InvalidArgumentException("Missing League CSV dependency, please run 'composer require league/csv'");
         }
 
-        return new CSVLoader($path, $open_mode, $safe_mode, $with_header, $delimiter, $enclosure, $escape);
+        return new CSVLoader($file_name, $open_mode, $with_header, false, $delimiter, $enclosure, $escape);
+    }
+
+    /**
+     * @param string $file_name
+     * @param string $open_mode
+     * @param bool $with_header
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param string $escape
+     *
+     *@throws InvalidArgumentException
+     *
+     * @return Loader
+     */
+    final public static function to_directory(
+        string $file_name,
+        string $open_mode = 'w+',
+        bool $with_header = true,
+        string $delimiter = ',',
+        string $enclosure = '"',
+        string $escape = '\\'
+    ) : Loader {
+        if (!\class_exists('League\Csv\Reader')) {
+            throw new InvalidArgumentException("Missing League CSV dependency, please run 'composer require league/csv'");
+        }
+
+        return new CSVLoader($file_name, $open_mode, true, $with_header, $delimiter, $enclosure, $escape);
     }
 }

@@ -29,7 +29,7 @@ use Flow\ETL\Row;
 use Flow\ETL\Rows;
 use League\Csv\Reader;
 
-$extractor = CSV::read_file(
+$extractor = CSV::from_file(
     __DIR__ . '/../Fixtures/annual-enterprise-survey-2019-financial-year-provisional-csv.csv',
     $rowsInBatch = 5,
     $offsetHeader = 0
@@ -52,7 +52,7 @@ use Flow\ETL\Row;
 use Flow\ETL\Rows;
 use League\Csv\Writer;
 
-$loader = new CSV::write(
+$loader = new CSV::to(
     $path = \sys_get_temp_dir() . '/' . \uniqid('flow_php_etl_csv_loader', true) . '.csv'
 );
 
