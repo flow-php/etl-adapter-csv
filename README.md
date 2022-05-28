@@ -5,7 +5,7 @@
 ## Description
 
 ETL Adapter that provides Loaders and Extractors that works with CSV files.
-Loader does not require any external dependencies, it's working on internal PHP functions.
+It does not require any external dependencies, it's working on internal PHP functions.
 
 ## Installation 
 
