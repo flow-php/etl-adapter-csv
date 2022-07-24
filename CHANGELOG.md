@@ -1,4 +1,4 @@
-## [Unreleased] - 2022-07-18
+## [Unreleased] - 2022-07-24
 
 ### Added
 - [#108](https://github.com/flow-php/etl-adapter-csv/pull/108) - **Support for reading/writing into FileStream** - [@norberttech](https://github.com/norberttech)
@@ -33,6 +33,7 @@
 - [63633c](https://github.com/flow-php/etl-adapter-csv/commit/63633cae23ccfa2222925a1c94c9acf9aca65e7d) - **docs** - [@norberttech](https://github.com/norberttech)
 
 ### Removed
+- [620a24](https://github.com/flow-php/etl-adapter-csv/commit/620a24653c329f1527e2e2966fd2c512d6fea734) - **failing test in dbal platform** - [@norberttech](https://github.com/norberttech)
 - [#108](https://github.com/flow-php/etl-adapter-csv/pull/108) - **League/CSV dependency** - [@norberttech](https://github.com/norberttech)
 - [a58cef](https://github.com/flow-php/etl-adapter-csv/commit/a58cef65fe01e59c69e12e0ce29d4010b6904223) - **unused php extensions dependencies** - [@norberttech](https://github.com/norberttech)
 - [#104](https://github.com/flow-php/etl-adapter-csv/pull/104) - **Deprecated classes** - [@norberttech](https://github.com/norberttech)
