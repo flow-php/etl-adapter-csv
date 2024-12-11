@@ -24,12 +24,10 @@ final class EntryNormalizer
             Entry\XMLEntry::class => $entry->toString(),
             Entry\DateTimeEntry::class => $entry->value()?->format($this->dateTimeFormat),
             Entry\EnumEntry::class => $entry->value()?->name,
-            Entry\ArrayEntry::class,
             Entry\ListEntry::class,
             Entry\MapEntry::class,
             Entry\StructureEntry::class,
-            Entry\JsonEntry::class,
-            Entry\ObjectEntry::class => $this->caster->to(type_json())->value($entry->value()),
+            Entry\JsonEntry::class => $this->caster->to(type_json())->value($entry->value()),
             default => $entry->value(),
         };
     }
