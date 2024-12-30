@@ -6,9 +6,9 @@ namespace Flow\ETL\Adapter\CSV\Tests\Unit\Detector;
 
 use Flow\ETL\Adapter\CSV\Detector\Option;
 use Flow\ETL\Exception\InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use Flow\ETL\Tests\FlowTestCase;
 
-final class OptionTest extends TestCase
+final class OptionTest extends FlowTestCase
 {
     public function test_empty_enclosure() : void
     {
