@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Flow\ETL\Adapter\CSV;
 
+use Flow\ETL\{Adapter\CSV\RowsNormalizer\EntryNormalizer, FlowContext, Loader, Rows};
 use Flow\ETL\Exception\RuntimeException;
 use Flow\ETL\Loader\Closure;
 use Flow\ETL\Row\Entry;
-use Flow\ETL\{Adapter\CSV\RowsNormalizer\EntryNormalizer, FlowContext, Loader, Rows};
 use Flow\Filesystem\{DestinationStream, Partition, Path};
 
 final class CSVLoader implements Closure, Loader, Loader\FileLoader
