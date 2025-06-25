@@ -168,6 +168,9 @@ final class CSVExtractor implements Extractor, FileExtractor, LimitableExtractor
         return $this;
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function withSchema(Schema $schema) : self
     {
         $this->schema = $schema;
@@ -182,9 +185,24 @@ final class CSVExtractor implements Extractor, FileExtractor, LimitableExtractor
         return $this;
     }
 
+    /**
+     * @param array<array-key, mixed> $headers
+     *
+     * @return array<int, string>
+     */
     private function mapHeaders(array $headers) : array
     {
-        $headers = \array_map(fn (string $header) : string => \trim($header), $headers);
+        $headers = \array_map(
+            static fn (mixed $header) : string => \trim(
+                match (true) {
+                    \is_string($header) => $header,
+                    \is_numeric($header) => (string) $header,
+                    $header === null => '',
+                    default => \is_scalar($header) ? (string) $header : '',
+                }
+            ),
+            $headers
+        );
 
         return \array_map(
             fn (string $header, int $index) : string => $header !== '' ? $header : 'e' . \str_pad(
