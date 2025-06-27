@@ -52,14 +52,14 @@ final class CSVExtractor implements Extractor, FileExtractor, LimitableExtractor
 
             $headers = [];
             $headersCount = 0;
+            $streamUri = $shouldPutInputIntoRows ? $stream->path()->uri() : null;
+            $partitions = $stream->path()->partitions();
 
-            foreach ($stream->readLines(length: $this->charactersReadInLine) as $line => $csvLine) {
-                if ($line === 0 && $this->removeBOM) {
-                    $csvLine = preg_replace('/^(\xEF\xBB\xBF|\xFF\xFE|\xFE\xFF|\xFF\xFE\x00\x00|\x00\x00\xFE\xFF)/', '', $csvLine);
-                }
+            $csvLineReader = new CSVLineReader($enclosure, $this->charactersReadInLine, $this->removeBOM);
+            $rowNormalizer = new CSVRowNormalizer($this->emptyToNull);
 
-                /** @var non-empty-list<null|string> $rowData */
-                $rowData = \str_getcsv((string) $csvLine, $separator, $enclosure, $escape);
+            foreach ($csvLineReader->readLines($stream) as $csvLine) {
+                $rowData = \str_getcsv($csvLine, $separator, $enclosure, $escape);
                 $rowDataCount = \count($rowData);
 
                 if ([] === $headers) {
@@ -71,36 +71,19 @@ final class CSVExtractor implements Extractor, FileExtractor, LimitableExtractor
                         continue;
                     }
 
-                    $headers = \array_map(fn (int $e) : string => 'e' . \str_pad((string) $e, 2, '0', STR_PAD_LEFT), \range(0, \count($rowData) - 1));
-                    $headers = $this->mapHeaders($headers);
-                    $headersCount = \count($headers);
+                    $headers = $this->generateAutoHeaders($rowDataCount);
+                    $headersCount = $rowDataCount;
                 }
 
-                // Expand columns to the size of the previous row
-                for ($i = $rowDataCount; $i < $headersCount; $i++) {
-                    $rowData[$i] = $this->emptyToNull ? null : '';
-                }
-
-                // Cut columns to the size of the header row
-                if ($rowDataCount > $headersCount) {
-                    $rowData = \array_slice($rowData, 0, $headersCount);
-                }
-
-                if ($this->emptyToNull) {
-                    foreach ($rowData as $i => $data) {
-                        if ($data === '') {
-                            $rowData[$i] = null;
-                        }
-                    }
-                }
+                $rowData = $rowNormalizer->normalize($rowData, $headersCount);
 
                 $row = \array_combine($headers, $rowData);
 
-                if ($shouldPutInputIntoRows) {
-                    $row['_input_file_uri'] = $stream->path()->uri();
+                if ($streamUri !== null) {
+                    $row['_input_file_uri'] = $streamUri;
                 }
 
-                $signal = yield array_to_rows($row, $context->entryFactory(), $stream->path()->partitions(), $this->schema);
+                $signal = yield array_to_rows($row, $context->entryFactory(), $partitions, $this->schema);
                 $this->incrementReturnedRows();
 
                 if ($signal === Signal::STOP || $this->reachedLimit()) {
@@ -183,6 +166,20 @@ final class CSVExtractor implements Extractor, FileExtractor, LimitableExtractor
         $this->separator = $separator;
 
         return $this;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function generateAutoHeaders(int $count) : array
+    {
+        $headers = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $headers[$i] = 'e' . \str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+        }
+
+        return $headers;
     }
 
     /**
